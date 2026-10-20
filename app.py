@@ -135,7 +135,7 @@ st.set_page_config(page_title="Ask your PDF", page_icon="📄", layout="centered
 st.title("Ask your PDF")
 st.write("Upload a document and ask questions. Answers are grounded in the PDF and cite page numbers.")
 
-api_key = os.environ.get("OPENAI_API_KEY", "")
+api_key = os.environ.get("OPENAI_API_KEY", "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")
 if not api_key:
     api_key = st.text_input("OpenAI API key", type="password")
 
