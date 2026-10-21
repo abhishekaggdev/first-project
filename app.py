@@ -17,7 +17,7 @@ MAX_PDF_SIZE = 25 * 1024 * 1024
 CHUNK_SIZE = 1200
 CHUNK_OVERLAP = 180
 MAX_CONTEXT_CHARS = 12_000
-GEMINI_MODEL = "gemini-2.5-flash"
+GEMINI_MODEL = "gemini-3.8-flash"
 TOKEN_PATTERN = re.compile(r"\b[\w'-]+\b", re.UNICODE)
 
 
