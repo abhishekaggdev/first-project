@@ -6,7 +6,6 @@ import re
 from collections import Counter
 from dataclasses import dataclass
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 import pymupdf as fitz
@@ -140,12 +139,13 @@ def answer_question(api_key: str, question: str, passages: list[Passage]) -> str
         "generationConfig": {"temperature": 0.2},
     }
     request = Request(
-        (
-            "https://generativelanguage.googleapis.com/v1beta/models/"
-            f"{GEMINI_MODEL}:generateContent?{urlencode({'key': api_key})}"
-        ),
+        "https://generativelanguage.googleapis.com/v1beta/models/"
+        f"{GEMINI_MODEL}:generateContent",
         data=json.dumps(request_body).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
+        headers={
+            "Content-Type": "application/json",
+            "x-goog-api-key": api_key,
+        },
         method="POST",
     )
 
@@ -159,9 +159,15 @@ def answer_question(api_key: str, question: str, passages: list[Passage]) -> str
         except (json.JSONDecodeError, UnicodeDecodeError):
             message = "The API returned an unreadable error response."
         raise GeminiAPIError(f"Gemini API returned HTTP {error.code}: {message}") from error
-    except (URLError, TimeoutError) as error:
+    except TimeoutError as error:
         raise GeminiAPIError(
-            "Could not connect to the Gemini API. Check your internet connection and try again."
+            "The Gemini API request timed out after 60 seconds. Check your internet "
+            "connection, VPN, or firewall and try again."
+        ) from error
+    except URLError as error:
+        raise GeminiAPIError(
+            f"Could not connect to the Gemini API: {error.reason}. "
+            "Check your internet connection, DNS, proxy, VPN, or firewall."
         ) from error
     except (json.JSONDecodeError, UnicodeDecodeError) as error:
         raise GeminiAPIError("Gemini returned an invalid response.") from error
