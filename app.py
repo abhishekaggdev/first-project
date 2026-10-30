@@ -16,7 +16,7 @@ MAX_PDF_SIZE = 25 * 1024 * 1024
 CHUNK_SIZE = 1200
 CHUNK_OVERLAP = 180
 MAX_CONTEXT_CHARS = 12_000
-GEMINI_MODEL = "gemini-3.8-flash"
+GEMINI_MODEL = "gemini-3.5-flash-lite"
 TOKEN_PATTERN = re.compile(r"\b[\w'-]+\b", re.UNICODE)
 
 
@@ -136,7 +136,10 @@ def answer_question(api_key: str, question: str, passages: list[Passage]) -> str
                 ],
             }
         ],
-        "generationConfig": {"temperature": 0.2},
+        "generationConfig": {
+            "temperature": 0.2,
+            "thinkingConfig": {"thinkingLevel": "LOW"},
+        },
     }
     request = Request(
         "https://generativelanguage.googleapis.com/v1beta/models/"
